@@ -39,6 +39,21 @@ class Openni2 < Formula
     (share+"openni2/tools").install Dir["Tools/*"]
     (share+"openni2/samples").install Dir["Samples/*"]
     doc.install "Documentation" if build.with? "docs"
+
+    # Create and install a pkg-config file
+    pkg_config_file = "prefix=#{prefix}
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib/ni2
+includedir=${prefix}/include/ni2
+
+Name: OpenNI2
+Description: A general purpose driver for all OpenNI cameras.
+Version: 2.2.0.33
+Cflags: -I${includedir}
+Libs: -L${libdir} -lOpenNI2 -L${libdir}/OpenNI2/Drivers -lOniFile -lPS1080
+"
+    File.open('openni2.pc', 'w') {|f| f.write(pkg_config_file)}
+    (lib + 'pkgconfig').install 'openni2.pc'
   end
 
   def caveats; <<-EOS.undent
